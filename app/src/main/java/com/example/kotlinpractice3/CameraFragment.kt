@@ -1,59 +1,93 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.kotlinpractice3
 
+import android.content.pm.PackageManager
+import android.hardware.Camera
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.SurfaceHolder
+import android.view.SurfaceView
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class CameraFragment : Fragment(), SurfaceHolder.Callback {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [CameraFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class CameraFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var camera: Camera
+    private lateinit var surfaceHolder: SurfaceHolder
+    private lateinit var surfaceView: SurfaceView
+    private lateinit var photoDataBtn: Button
+    private lateinit var takePhotoBtn: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_camera, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CameraFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CameraFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (checkCameraPermission()) {
+            camera = Camera.open()
+            surfaceView = view.findViewById(R.id.surfaceView)
+            surfaceHolder = surfaceView.holder
+            surfaceHolder.addCallback(this)
+        }
+
+        photoDataBtn = view.findViewById(R.id.photoDataBtn)
+        photoDataBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_cameraFragment_to_photoDataFragment)
+        }
+
+        takePhotoBtn = view.findViewById(R.id.takePhotoBtn)
+        takePhotoBtn.setOnClickListener {
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            val currentTime = dateFormat.format(Date())
+
+            val photosDirectory = File(requireContext().externalMediaDirs.first(), "photos")
+            val dateFile = File(photosDirectory, "date.txt")
+
+            dateFile.appendText("\n$currentTime")
+        }
+
+    }
+
+    override fun surfaceCreated(holder: SurfaceHolder) {
+        try {
+            camera.setPreviewDisplay(holder)
+            camera.startPreview()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
+
+    }
+
+    override fun surfaceDestroyed(pO: SurfaceHolder) {
+        camera.stopPreview()
+        camera.release()
+    }
+
+    private fun checkCameraPermission(): Boolean {
+        return if (
+            requireActivity().checkSelfPermission(android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+        ) {
+            true
+        } else {
+            requestPermissions(arrayOf(android.Manifest.permission.CAMERA), 1)
+            false
+        }
     }
 }
