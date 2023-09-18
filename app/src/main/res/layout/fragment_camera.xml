@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     android:orientation="vertical"
     tools:context=".CameraFragment">
 
@@ -16,6 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="5"
+        android:background="@color/black"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -23,16 +25,18 @@
             android:id="@+id/takePhotoBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/black"
+            android:backgroundTint="@color/white"
             android:text="Take photo"
+            android:textColor="@color/black"
             tools:ignore="HardcodedText" />
 
         <Button
             android:id="@+id/photoDataBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/black"
+            android:backgroundTint="@color/white"
             android:text="Photo Data"
+            android:textColor="@color/black"
             tools:ignore="HardcodedText" />
 
 

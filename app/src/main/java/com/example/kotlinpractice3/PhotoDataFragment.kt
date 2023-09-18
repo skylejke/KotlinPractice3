@@ -15,6 +15,7 @@ import java.io.FileReader
 
 
 class PhotoDataFragment : Fragment() {
+
     private lateinit var goToCameraButton: Button
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: PhotoDataListAdapter
@@ -23,8 +24,6 @@ class PhotoDataFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_photo_data, container, false)
     }
 
@@ -50,7 +49,6 @@ class PhotoDataFragment : Fragment() {
 
         val layoutManager = LinearLayoutManager(requireContext())
         recyclerView.layoutManager = layoutManager
-
 
         goToCameraButton = view.findViewById(R.id.goToCameraButton)
         goToCameraButton.setOnClickListener {
